@@ -194,13 +194,13 @@ If you're dealing with similar filtering challenges at scale, consider whether a
 
 [BF vs Cuckoo filter](https://bdupras.github.io/filter-tutorial/)
 [Calculate BF Efficiency](https://hur.st/bloomfilter/?n=10000&p=1.0E-7&m=&k=)
-There are over 60 different variations of probabilistic filters each with different improvements over the bloom filter. Be sure to check them out before you start implementing.
-> Bloom Filters (redis and valkey)
-> Cuckoo Filters (only in redis)
-> Ribbon Filters
-> Quotient Filters
-> Blocked Bloom Filters
-> Counting Bloom Filters
-> Xor filters
-> Binary Fuse Filters.
+There are over 60 different variations of probabilistic filters each with different improvements over the bloom filter. Be sure to check some of them out to see which variation works best for your use case.
+1. Bloom Filters
+2. Counting Bloom Filters
+3. Cuckoo Filters
+4. Xor filters
+5. Ribbon Filters
+6. Quotient Filters
+7. Binary Fuse Filters.
+... list goes on.
 
