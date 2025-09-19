@@ -42,7 +42,7 @@ A Bloom filter is essentially a probabilistic approximation of a hash set—a sp
 The beauty lies in its asymmetric certainty. When a Bloom filter says "NO," you can trust it completely—there's zero chance of a false negative. But when it says "MAYBE," there's a calculated risk it could be wrong (a false positive). 
 
 
-[How BF works](https://llimllib.github.io/bloomfilter-tutorial/)
+[How Bloom Filters work](https://llimllib.github.io/bloomfilter-tutorial/)
 
 
 This probabilistic nature means we can achieve massive space savings compared to exact data structures, trading perfect accuracy for dramatic efficiency gains—exactly what we need for high-throughput filtering.
