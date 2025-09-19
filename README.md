@@ -1,6 +1,6 @@
 # Scaling Change Data Capture for Black Friday: A Probabilistic Approach with Bloom Filters
 
-At Insider, our Product Catalog Database (PCD) receives millions of product updates daily. Our Change Data Capture (CDC) pipeline captures these database changes and delivers notifications to subscribers who are actively tracking specific products. As we prepare for upcoming peak seasons like Black Friday, one of our biggest challenges is efficiently filtering change notifications to deliver only relevant updates to the right subscribers. This is where Bloom filters are poised to be our game-changer.
+At Insider, our Product Catalog Database (PCD) receives millions of product updates daily. Our Change Data Capture (CDC) pipeline captures these database changes and delivers notifications to subscribers who are actively tracking specific products. As we prepare for upcoming peak seasons like Black Friday, one of our biggest challenges is efficiently filtering change notifications to deliver only relevant updates to the right subscribers. Enter Bloom filters—our solution to this challenge.
 
 ```mermaid
 graph LR
@@ -35,7 +35,7 @@ The core challenges we're addressing include:
 
 ## Enter Bloom Filters: Our Probabilistic Solution
 
-A Bloom filter is a space-efficient probabilistic data structure that operates on a fascinating principle: it can tell us with **absolute certainty** that an element is "DEFINITELY NOT in a set," but only with **probability** that an element "MAY BE in a set."
+A Bloom filter is essentially a probabilistic approximation of a hash set—a space-efficient data structure that can replace exact sets in scenarios where you can tolerate some uncertainty. It operates on a fascinating principle: it can tell us with **absolute certainty** that an element is "DEFINITELY NOT in a set," but only with **probability** that an element "MAY BE in a set."
 
 ### How the Probabilistic Magic Works
 
@@ -47,7 +47,6 @@ The beauty lies in its asymmetric certainty. When a Bloom filter says "NO," you 
 
 This probabilistic nature means we can achieve massive space savings compared to exact data structures, trading perfect accuracy for dramatic efficiency gains—exactly what we need for high-throughput filtering.
 
-Based on our analysis, Bloom filters are particularly well-suited for our implementation because we limit the number of products that can be tracked per partner (typically a few thousand). This constraint works in our favor since Bloom filter performance degrades as the fill rate increases—by keeping the tracked product count bounded, we should maintain optimal filter efficiency and minimal false positive rates.
 
 ```mermaid
 sequenceDiagram
@@ -69,14 +68,14 @@ sequenceDiagram
         Note over App: Discard change event
         Note over App: Event filtered out immediately<br/>No Redis lookup needed
     else Bloom Filter says "MAYBE" 
-        App->>BF: Is This Product Tracked ? (partnerID, productID)
-        BF->>App: ⚠️ Maybe ? UNCERTAIN - Verify with exact lookup
-        BF->>App: ⚠️ Maybe ? UNCERTAIN - Verify with exact lookup
-        BF->>App: ⚠️ Maybe ? UNCERTAIN - Verify with exact lookup
+        loop Multiple Events (Batching)
+            App->>BF: Is This Product Tracked ? (partnerID, productID)
+            BF->>App: ⚠️ Maybe ? UNCERTAIN - Verify with exact lookup
+        end
+        
+        Note over App: Batch multiple "MAYBE" results<br/>before expensive Redis lookup
 
-        Note over App: Gather all potential change events
-
-        App->>Redis: Are These Product REALLY Tracked ? SISMEMBER(partnerIDs, productIDs)
+        App->>Redis: Are These Products REALLY Tracked ? SISMEMBER(partnerIDs, productIDs)
         Note over Redis: Stage 2: Exact Verification        
         alt Product IS actually tracked
             Redis->>App: ✅ CONFIRMED - Process event
@@ -106,7 +105,7 @@ Our change detection system is designed with a two-stage filtering approach:
 ### Stage 1: Bloom Filter Quick Check
 When a change event arrives, we first check if the product ID exists in the partner-specific Bloom filter cached locally in application memory. This should happen in microseconds and eliminate the vast majority of non-tracked items immediately.
 
-The projected memory efficiency is remarkable—our Bloom filters should require 99% less memory compared to storing regular sets with thousands of product IDs that are hundreds of bytes long. This will allow us to keep all partner filters in memory without significant memory overhead.
+The projected memory efficiency is remarkable—our Bloom filters should require 99% less memory compared to storing exact hash sets of tracked products. This will allow us to keep all partner filters in memory without significant memory overhead.
 
 ```
 function FilterTrackingItems(changeItems):
