@@ -75,7 +75,7 @@ sequenceDiagram
         
         Note over App: Batch multiple "MAYBE" results<br/>before expensive Redis lookup
 
-        App->>Redis: Are These Products REALLY Tracked ? SISMEMBER(partnerIDs, productIDs)
+        App->>Redis: Are These Products REALLY Tracked ? Batch SISMEMBER(partnerID, productID1, productID2, ...)
         Note over Redis: Stage 2: Exact Verification        
         alt Product IS actually tracked
             Redis->>App: ✅ CONFIRMED - Process event
@@ -112,7 +112,7 @@ function FilterTrackingItems(changeItems):
     itemsToValidate = []
     
     for each item in changeItems:
-        if IsItemProbablyTracked(item.partnerID, item.documentID):
+        if BloomFilterMightContain(item.partnerID, item.documentID):
             itemsToValidate.add(item)  // Might be tracked, needs verification
         // else: definitely not tracked, skip entirely
     
@@ -120,7 +120,7 @@ function FilterTrackingItems(changeItems):
 ```
 
 ### Stage 2: Redis Set Validation
-For items that pass the Bloom filter check (potential matches + false positives), we perform an exact lookup in Redis sets to confirm if they're actually being tracked. We use Redis **SISMEMBER** operations in a pipeline for efficient batch validation.
+For items that pass the Bloom filter check (potential matches + false positives), we perform exact lookups in Redis sets to confirm if they're actually being tracked. We use Redis **SISMEMBER** operations in a pipeline for efficient batch validation of multiple productIDs simultaneously.
 
 ```
 function validateInRedis(itemsToValidate):
