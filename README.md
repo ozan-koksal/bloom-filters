@@ -140,34 +140,20 @@ function validateInRedis(itemsToValidate):
     return validatedItems  // Only genuinely tracked items
 ```
 
-## Expected Performance Impact
+## Implementation Details
 
-Implementing Bloom filters is one of the key measures we're taking to make our system more durable during high peak traffic times like Black Friday. Based on our analysis, we anticipate:
-
-- **Memory efficiency**: Our Bloom filters should require 99% less memory compared to storing regular sets with thousands of product IDs that are hundreds of bytes long. This will allow us to keep all partner filters in memory with barely any memory overhead.
-
-- **Massive reduction in Redis lookups**: By eliminating the vast majority of non-tracked items at the Bloom filter stage, we project a dramatic reduction in load on our Redis infrastructure.
-
-- **Scalability without Redis dependency**: The system should be able to handle massive spikes in change volume without overwhelming the underlying Redis database, allowing us to scale independently of our storage layer.
-
-## Configuration & Tuning Strategy
-
-We've designed our configuration for optimal performance based on theoretical analysis:
-
+**Configuration & Tuning:**
 - **Size**: 10,000 expected elements per partner
 - **False positive rate**: 1 in 1 Million (configurable) 
 - **Memory usage**: ~40KB per bloom filter (compared to ~1.6MB for a hash set)
 
-## Cache Management Strategy
-
-To keep our Bloom filters fresh and accurate, we're implementing:
-
+**Cache Management:**
 1. **Automatic expiration** with jitter to prevent simultaneous updates
 2. **Lazy loading** - filters are updated only when accessed and expired
 3. **Partner-specific filtering** - each partner gets their own Bloom filter
 4. **Graceful degradation** - on errors, we assume items are tracked to avoid missing notifications
 
-### Trade-offs We're Considering
+**Key Trade-offs:**
 - **False positive rate** tuning based on real-world traffic patterns
 - **Eventual consistency** due to filter expiration windows
 - **Memory vs. accuracy** balance for different partner sizes
@@ -182,6 +168,16 @@ Key considerations for anyone implementing similar systems:
 4. **Use appropriate expiration times** - balance freshness vs. performance
 5. **Choose your use case carefully** - Bloom filters aren't a universal replacement for sets
 
+## Expected Performance Impact
+
+Implementing Bloom filters is one of the key measures we're taking to make our system more durable during high peak traffic times like Black Friday. Based on our analysis, we anticipate:
+
+- **Memory efficiency**: Our Bloom filters should require 99% less memory compared to storing regular sets with thousands of product IDs that are hundreds of bytes long. This will allow us to keep all partner filters in memory with barely any memory overhead.
+
+- **Massive reduction in Redis lookups**: By eliminating the vast majority of non-tracked items at the Bloom filter stage, we project a dramatic reduction in load on our Redis infrastructure.
+
+- **Scalability without Redis dependency**: The system should be able to handle massive spikes in change volume without overwhelming the underlying Redis database, allowing us to scale independently of our storage layer.
+
 ## Looking Forward
 
 As we prepare for the upcoming peak season, this Bloom filter implementation represents our commitment to building resilient, scalable systems. The theoretical foundations are solid, and we're confident this approach will significantly improve our ability to handle traffic spikes during events like Black Friday.
@@ -193,7 +189,9 @@ If you're dealing with similar filtering challenges at scale, consider whether a
 ## Further reading
 
 [BF vs Cuckoo filter](https://bdupras.github.io/filter-tutorial/)
+
 [Calculate BF Efficiency](https://hur.st/bloomfilter/?n=10000&p=1.0E-7&m=&k=)
+
 There are over 60 different variations of probabilistic filters each with different improvements over the bloom filter. Be sure to check some of them out to see which variation works best for your use case.
 1. Bloom Filters
 2. Counting Bloom Filters
