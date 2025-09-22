@@ -178,6 +178,8 @@ Implementing Bloom filters is one of the key measures we're taking to make our s
 
 - **Scalability without Redis dependency**: The system should be able to handle massive spikes in change volume without overwhelming the underlying Redis database, allowing us to scale independently of our storage layer.
 
+- **CPU efficiency**: In-memory Bloom filter lookups are extremely fast (O(k) where k is the number of hash functions), requiring only microseconds compared to Redis network round-trips that take milliseconds. While each lookup requires computing multiple hash functions, this CPU cost is negligible compared to the network and I/O overhead we eliminate. Initial filter creation requires O(n*k) operations to insert all tracked products, but this one-time cost is amortized across millions of lookups.
+
 ## Looking Forward
 
 As we prepare for the upcoming peak season, this Bloom filter implementation represents our commitment to building resilient, scalable systems. The theoretical foundations are solid, and we're confident this approach will significantly improve our ability to handle traffic spikes during events like Black Friday.
