@@ -1,6 +1,6 @@
 # Scaling Change Data Capture for Black Friday: A Probabilistic Approach with Bloom Filters
 
-At Insider, our Product Catalog Database (PCD) receives millions of product updates daily. Our Change Data Capture (CDC) pipeline captures these database changes and delivers notifications to subscribers who are actively tracking specific products. As we prepare for upcoming peak seasons like Black Friday, one of our biggest challenges is efficiently filtering change notifications to deliver only relevant updates to the right subscribers. Enter Bloom filters—our solution to this challenge.
+At Insider, our Product Catalog Database (PCD) receives millions of product updates daily. Our Change Data Capture (CDC) pipeline captures these database changes and delivers notifications to subscribers who are actively tracking specific products. As we prepare for upcoming peak seasons like Black Friday, one of our biggest challenges is efficiently filtering change notifications to deliver **only** relevant updates to the right subscribers. Enter Bloom filters—our solution to this challenge.
 
 ```mermaid
 graph LR
@@ -168,7 +168,7 @@ Key considerations for anyone implementing similar systems:
 4. **Use appropriate expiration times** - balance freshness vs. performance
 5. **Choose your use case carefully** - Bloom filters aren't a universal replacement for sets
 
-## Expected Performance Impact
+## Performance Impact
 
 Implementing Bloom filters is one of the key measures we're taking to make our system more durable during high peak traffic times like Black Friday. Based on our analysis:
 
@@ -182,11 +182,11 @@ Implementing Bloom filters is one of the key measures we're taking to make our s
 
 ## Looking Forward
 
-As we prepare for the upcoming peak season, this Bloom filter implementation represents our commitment to building resilient, scalable systems. The theoretical foundations are solid, and we're confident this approach will significantly improve our ability to handle traffic spikes during events like Black Friday.
+As we prepare for the upcoming peak season, this Bloom filter implementation represents our commitment to building resilient, scalable systems. The foundations are solid, and we're confident this approach will significantly improve our ability to handle traffic spikes during events like Black Friday.
 
-The key insight driving this optimization is that you don't always need perfect accuracy—sometimes "probably not" is good enough, especially when combined with a secondary verification step. This approach should allow us to scale our CDC pipeline to handle massive traffic spikes while keeping our infrastructure costs under control.
+The key insight driving this optimization is that you don't always need perfect accuracy—sometimes "probably not" is good enough, especially when combined with a secondary verification step. This approach allows us to scale our CDC pipeline to handle massive traffic spikes while keeping our infrastructure costs under control.
 
-If you're dealing with similar filtering challenges at scale, consider whether a probabilistic approach might be the solution you're looking for. Based on our analysis, the performance gains should be transformative for high-throughput systems.
+If you're dealing with similar filtering challenges at scale, consider whether a probabilistic approach might be the solution you're looking for. Based on our analysis, the performance gains are transformative for high-throughput systems.
 
 ## Further reading
 
