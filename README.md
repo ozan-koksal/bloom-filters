@@ -103,9 +103,9 @@ The key insight is that Bloom filters excel at saying "definitely not tracked" w
 Our change detection system is designed with a two-stage filtering approach:
 
 ### Stage 1: Bloom Filter Quick Check
-When a change event arrives, we first check if the product ID exists in the partner-specific Bloom filter cached locally in application memory. This should happen in microseconds and eliminate the vast majority of non-tracked items immediately.
+When a change event arrives, we first check if the product ID exists in the partner-specific Bloom filter cached locally in application memory. This happens in microseconds and eliminates the vast majority of non-tracked items immediately.
 
-The projected memory efficiency is remarkable—our Bloom filters should require 99% less memory compared to storing exact hash sets of tracked products. This will allow us to keep all partner filters in memory without significant memory overhead.
+The projected memory efficiency is remarkable—our Bloom filters require 99% less memory compared to storing exact hash sets of tracked products. This allows us to keep all partner filters in memory without significant memory overhead.
 
 ```
 function FilterTrackingItems(changeItems):
@@ -182,11 +182,11 @@ Implementing Bloom filters is one of the key measures we're taking to make our s
 
 ## Looking Forward
 
-As we prepare for the upcoming peak season, this Bloom filter implementation represents our commitment to building resilient, scalable systems. The foundations are solid, and we're confident this approach will significantly improve our ability to handle traffic spikes during events like Black Friday.
+As we prepare for the upcoming peak season, this Bloom filter implementation represents our commitment to building resilient, scalable systems. The foundations are solid, and this approach will significantly improve our ability to handle traffic spikes during events like Black Friday.
 
 The key insight driving this optimization is that you don't always need perfect accuracy—sometimes "probably not" is good enough, especially when combined with a secondary verification step. This approach allows us to scale our CDC pipeline to handle massive traffic spikes while keeping our infrastructure costs under control.
 
-If you're dealing with similar filtering challenges at scale, consider whether a probabilistic approach might be the solution you're looking for. Based on our analysis, the performance gains are transformative for high-throughput systems.
+If you're dealing with similar filtering challenges at scale, consider whether a probabilistic approach is the solution you're looking for. Based on our analysis, the performance gains are transformative for high-throughput systems.
 
 ## Further reading
 
