@@ -204,3 +204,7 @@ There are over 60 different variations of probabilistic filters each with differ
 7. Binary Fuse Filters.
 ... list goes on.
 
+---
+
+If you want to check for more tips about optimizing your AWS resources, check the [Insider Engineering Blog](https://medium.com/insiderengineering).
+
