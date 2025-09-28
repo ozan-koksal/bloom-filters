@@ -208,3 +208,5 @@ There are over 60 different variations of probabilistic filters each with differ
 
 If you want to check for more tips about optimizing your AWS resources, check the [Insider Engineering Blog](https://medium.com/insiderengineering).
 
+Check out another brilliant article by Insider Engineering about performance optimization [Using the Same Redis Connection Across AWS Lambda Invocations for Better Performance](https://medium.com/insiderengineering/using-the-same-redis-connection-across-aws-lambda-invocations-for-better-performance-478b816d4f1e)
+
